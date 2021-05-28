@@ -37,6 +37,7 @@ for f in folders:
         shutil.copy(f"{f}/labels/{name}", f"boulderSet/{arg['label_set_name']}/{name}")
         print(f"{f}/labels/{name}")
 
+print(f"boulderSet/{arg['label_set_name']}")
 # try:
 #     os.unlink("labels")
 # except FileNotFoundError:
