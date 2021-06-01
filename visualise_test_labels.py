@@ -17,7 +17,7 @@ import glob
 import os
 
 base_dir = "mmseg_results/result_labels"
-ann_dir = 'unknown_improved_new_sim9'
+ann_dir = 'crf_all'
 # base_dir = "boulderSet/test_set"
 # ann_dir = 'labels'
 
