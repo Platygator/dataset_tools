@@ -55,8 +55,8 @@ colours = ['#FFCC00', '#A12121', '#2A21A1', '#06801F']
 for i, npy_name in enumerate(npy_names):
     # plot IoU development
     set_data = np.load(f"{data_folder}/{npy_name}", allow_pickle=True).item()
-    set_data[plot_for][0] = 0.75
-    ax.plot(epochs, np.array(set_data[plot_for]) * 100 - 10, label=npy_name[:-4], color=colours[i])
+    ax.plot(epochs, np.array(set_data[plot_for]) * 100, label=npy_name[:-4], color=colours[i])
+    # ax.plot([1], [1], label=npy_name[:-4], color=colours[i])
 
     # plot IoU of label
     label_data = np.load(f"{label_folder}/{npy_name[:-4]}/result.npy", allow_pickle=True).item()
