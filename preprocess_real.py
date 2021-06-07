@@ -9,7 +9,17 @@ Changed by
 Python 3.
 Library version:
 
+cam_mat = np.array([[1577.1159987660135, 0, 676.7292997380368],
+                    [0, 1575.223362703865, 512.8101184300463],
+                    [0, 0, 1]])
 
+dist_mat = np.array([-0.46465317710098897, 0.2987490394355827, 0.004075959465516531, 0.005311175696501367])
+
+cam_mat = np.array([[1061.029930829013, 0, 1011.539146901374],
+                    [0, 1061.01597110039, 762.8834144400216],
+                    [0, 0, 1]])
+
+dist_mat = np.array([-0.007917994945883303, 0.03351829372987945, 0.0003841044102097604, -0.002080542086396206, 0])
 """
 
 import numpy as np
@@ -29,13 +39,13 @@ def create_argparser():
 
 
 # Change parameters here!
-cam_mat = np.array([[1577.1159987660135, 0, 676.7292997380368],
-                    [0, 1575.223362703865, 512.8101184300463],
+cam_mat = np.array([[1061.029930829013, 0, 1011.539146901374],
+                    [0, 1061.01597110039, 762.8834144400216],
                     [0, 0, 1]])
 
-dist_mat = np.array([-0.46465317710098897, 0.2987490394355827, 0.004075959465516531, 0.005311175696501367])
+dist_mat = np.array([-0.007917994945883303, 0.03351829372987945, 0.0003841044102097604, -0.002080542086396206, 0])
 
-new_size = (752, 480)
+new_size = (2064//2, 1544//2)
 
 arg = create_argparser()
 main_path = arg['main_path']
@@ -74,14 +84,14 @@ for i, path in enumerate(photo_images):
 
     # Saving
     path_parts = list(os.path.split(path))
-    img_name = "u_" + path_parts[-1]
+    img_name = "" + path_parts[-1]
     path_parts.pop(-1)
     cv2.imwrite(os.path.join(*path_parts, img_name), img)
-    break
+    # break
 
 
-scaling_mat = np.array([[scaling_ratio[0], 0, scaling_ratio[0]/2 - 0.5],
-                       [0, scaling_ratio[1], scaling_ratio[1]/2 - 0.5],
+scaling_mat = np.array([[scaling_ratio[0], 0, 0],
+                       [0, scaling_ratio[1], 0],
                        [0, 0, 1]])
 resized_cam_mat = scaling_mat.dot(cam_mat)
 
