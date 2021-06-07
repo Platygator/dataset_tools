@@ -35,7 +35,8 @@ cam_mat = np.array([[1577.1159987660135, 0, 676.7292997380368],
 
 dist_mat = np.array([-0.46465317710098897, 0.2987490394355827, 0.004075959465516531, 0.005311175696501367])
 
-new_size = (752, 480)
+# new_size = (752, 480)
+new_size = (1440, 1080)
 
 arg = create_argparser()
 main_path = arg['main_path']
@@ -45,10 +46,13 @@ photo_images = [k for k in glob.glob(f'{os.path.abspath(main_path)}/*.png')]
 len_img = len(photo_images)
 
 img = cv2.imread(photo_images[0])
-h, w = img.shape[:2]
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix(cam_mat, dist_mat, (w, h), 1, (w, h))
+height, width = img.shape[:2]
 
-scaling_ratio = (new_size[0]/w, new_size[1]/h)
+# init_ (compute map)
+# undistort rectify map
+newcameramtx, roi = cv2.getOptimalNewCameraMatrix(cam_mat, dist_mat, (width, height), 1, (width, height))
+
+scaling_ratio = (new_size[0]/width, new_size[1]/height)
 
 for i, path in enumerate(photo_images):
     print(f"[INFO] Undistorting image {i + 1}/{len_img} <- {path}")
@@ -69,19 +73,18 @@ for i, path in enumerate(photo_images):
 
         img = cv2.merge(cl_img)
 
-    # resizing
+    # Resizing
     img = cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
 
     # Saving
     path_parts = list(os.path.split(path))
-    img_name = "u_" + path_parts[-1]
+    img_name = "" + path_parts[-1]
     path_parts.pop(-1)
     cv2.imwrite(os.path.join(*path_parts, img_name), img)
-    break
 
 
-scaling_mat = np.array([[scaling_ratio[0], 0, scaling_ratio[0]/2 - 0.5],
-                       [0, scaling_ratio[1], scaling_ratio[1]/2 - 0.5],
+scaling_mat = np.array([[scaling_ratio[0], 0, 0],
+                       [0, scaling_ratio[1], 0],
                        [0, 0, 1]])
 resized_cam_mat = scaling_mat.dot(cam_mat)
 
