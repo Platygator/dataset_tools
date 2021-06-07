@@ -33,6 +33,7 @@ import cv2
 def create_argparser():
     parser = argparse.ArgumentParser(description='Chose images main_path')
     parser.add_argument('-p', '--main_path', required=True, help='main_path to images')
+    parser.add_argument('-f', '--prefix', required=False, default='', help='main_path to images')
     parser.add_argument('-c', '--clahe', action='store_true', help='do clahe histogram normalization')
     args = vars(parser.parse_args())
     return args
@@ -45,29 +46,43 @@ cam_mat = np.array([[1061.029930829013, 0, 1011.539146901374],
 
 dist_mat = np.array([-0.007917994945883303, 0.03351829372987945, 0.0003841044102097604, -0.002080542086396206, 0])
 
-new_size = (2064//2, 1544//2)
+# new_size = (2064//2, 1544//2)
+new_size = (752, 480)
+# new_size = (1440, 1080)
 
 arg = create_argparser()
 main_path = arg['main_path']
 clahe = arg['clahe']
+prefix = arg['prefix']
 
 photo_images = [k for k in glob.glob(f'{os.path.abspath(main_path)}/*.png')]
 len_img = len(photo_images)
 
 img = cv2.imread(photo_images[0])
-h, w = img.shape[:2]
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix(cam_mat, dist_mat, (w, h), 1, (w, h))
+height, width = img.shape[:2]
 
-scaling_ratio = (new_size[0]/w, new_size[1]/h)
+
+# newcameramtx, roi = cv2.getOptimalNewCameraMatrix(cam_mat, dist_mat, (width, height), 1, (width, height))
+
+m1, m2 = cv2.initUndistortRectifyMap(cameraMatrix=cam_mat, distCoeffs=dist_mat, newCameraMatrix=cam_mat,
+                                     R=np.eye(3), size=(width, height), m1type=cv2.CV_32FC1)
+scaling_ratio = (new_size[0]/width, new_size[1]/height)
+# mask = np.ones([height - 1, width - 1])
+# mask = np.pad(mask, [[1, 1], [1, 1]], constant_values=0)
+# mask = cv2.remap(mask, map1=m1, map2=m2, interpolation=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT,
+#                  borderValue=(0, 0, 0, 0))
+# cv2.imwrite()
 
 for i, path in enumerate(photo_images):
     print(f"[INFO] Undistorting image {i + 1}/{len_img} <- {path}")
     img = cv2.imread(path)
 
     # Undistortion
-    img = cv2.undistort(img, cam_mat, dist_mat, None, newcameramtx)
-    x, y, w, h = roi
-    img = img[y:y + h, x:x + w]
+    # img = cv2.undistort(img, cam_mat, dist_mat, None, newcameramtx)
+    # x, y, w, h = roi
+    # img = img[y:y + h, x:x + w]
+    img = cv2.remap(img, map1=m1, map2=m2, interpolation=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT,
+                    borderValue=(0, 0, 0, 0))
 
     # Apply histogram normalization
     if clahe:
@@ -79,15 +94,14 @@ for i, path in enumerate(photo_images):
 
         img = cv2.merge(cl_img)
 
-    # resizing
+    # Resizing
     img = cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
 
     # Saving
     path_parts = list(os.path.split(path))
-    img_name = "" + path_parts[-1]
+    img_name = prefix + path_parts[-1]
     path_parts.pop(-1)
     cv2.imwrite(os.path.join(*path_parts, img_name), img)
-    # break
 
 
 scaling_mat = np.array([[scaling_ratio[0], 0, 0],
