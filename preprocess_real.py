@@ -69,16 +69,17 @@ m1, m2 = cv2.initUndistortRectifyMap(cameraMatrix=cam_mat, distCoeffs=dist_mat, 
                                      R=np.eye(3), size=(width, height), m1type=cv2.CV_32FC1)
 scaling_ratio = (new_size[0]/width, new_size[1]/height)
 
-edge = 5
-mask = np.ones([height - edge, width - edge])
-mask = np.pad(mask, [[edge, edge], [edge, edge]], constant_values=0)
-mask = cv2.remap(mask, map1=m1, map2=m2, interpolation=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT,
-                 borderValue=(0, 0, 0, 0))
-mask = cv2.resize(mask, new_size, interpolation=cv2.INTER_AREA)
-cv2.imwrite(f"{main_path}/mask.png", mask * 255)
+if gen_mask:
+    edge = 5
+    mask = np.ones([height - edge, width - edge])
+    mask = np.pad(mask, [[edge, edge], [edge, edge]], constant_values=0)
+    mask = cv2.remap(mask, map1=m1, map2=m2, interpolation=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT,
+                     borderValue=(0, 0, 0, 0))
+    mask = cv2.resize(mask, new_size, interpolation=cv2.INTER_AREA)
+    cv2.imwrite(f"{main_path}/mask.png", mask * 255)
 
 for i, path in enumerate(photo_images):
-    print(f"[INFO] Undistorting image {i + 1}/{len_img} <- {path}")
+    print(f"[INFO] Processing image {i + 1}/{len_img} <- {path}")
     img = cv2.imread(path)
 
     # Undistortion
@@ -110,7 +111,7 @@ for i, path in enumerate(photo_images):
         try:
             os.symlink(f"{main_path}/mask.png", f"{os.path.join(*path_parts, img_name)}.png")
         except FileExistsError:
-            pass
+            print("Can't link")
 
 
 scaling_mat = np.array([[scaling_ratio[0], 0, 0],
