@@ -18,7 +18,9 @@ import argparse
 
 def create_argparser():
     parser = argparse.ArgumentParser(description='Chose label name')
-    parser.add_argument('-l', '--label', required=True, help='label set name')
+    parser.add_argument('-l', '--labels', required=False, help='label set name')
+    parser.add_argument('-i', '--images', required=False, help='image set name')
+    parser.add_argument('-t', '--test', required=False, help='test set name')
     args = vars(parser.parse_args())
     return args
 
@@ -26,9 +28,31 @@ def create_argparser():
 args = create_argparser()
 test_name = args["label"]
 
-try:
-    os.unlink("labels")
-except FileNotFoundError:
-    pass
+if args["labels"]:
+    try:
+        os.unlink("labels")
+    except FileNotFoundError:
+        pass
+    
+    os.symlink(f"{args['labels']}", "labels")
 
-os.symlink(f"{test_name}", "labels")
+if args["images"]:
+    try:
+        os.unlink("images")
+    except FileNotFoundError:
+        pass
+
+    os.symlink(f"{args['images']}", "images")
+
+if args["test"]:
+    try:
+        os.unlink("test_set")
+    except FileNotFoundError:
+        pass
+
+    os.symlink(f"{args['test']}", "test_set")
+
+
+print("labels: ", os.readlink("labels"))
+print("images: ", os.readlink("images"))
+print("test_set: ", os.readlink("test_set"))

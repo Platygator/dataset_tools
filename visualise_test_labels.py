@@ -16,8 +16,8 @@ import numpy as np
 import glob
 import os
 
-base_dir = "mmseg_results/result_labels"
-ann_dir = 'crf_all'
+base_dir = "mmseg_results/"
+ann_dir = 'all_sim_real_data/'
 # base_dir = "boulderSet/test_set"
 # ann_dir = 'labels'
 
