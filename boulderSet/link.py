@@ -26,7 +26,6 @@ def create_argparser():
 
 
 args = create_argparser()
-test_name = args["label"]
 
 if args["labels"]:
     try:

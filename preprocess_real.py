@@ -44,7 +44,8 @@ cam_mat = np.array([[1061.029930829013, 0, 1011.539146901374],
                     [0, 1061.01597110039, 762.8834144400216],
                     [0, 0, 1]])
 
-dist_mat = np.array([-0.007917994945883303, 0.03351829372987945, 0.0003841044102097604, -0.002080542086396206, 0])
+# dist_mat = np.array([-0.007917994945883303, 0.03351829372987945, 0.0003841044102097604, -0.002080542086396206, 0])
+dist_mat = np.array([0, 0, 0, 0])
 
 # new_size = (2064//2, 1544//2)
 new_size = (752, 480)
@@ -56,7 +57,7 @@ clahe = arg['clahe']
 prefix = arg['prefix']
 gen_mask = arg['mask']
 
-photo_images = [k for k in glob.glob(f'{os.path.abspath(main_path)}/*.png')]
+photo_images = [k for k in glob.glob(f'{os.path.abspath(main_path)}/*.jpg')]
 len_img = len(photo_images)
 
 img = cv2.imread(photo_images[0])
@@ -106,7 +107,7 @@ for i, path in enumerate(photo_images):
     path_parts = list(os.path.split(path))
     img_name = prefix + path_parts[-1]
     path_parts.pop(-1)
-    cv2.imwrite(os.path.join(*path_parts, img_name), img)
+    cv2.imwrite(os.path.join(*path_parts, img_name[:-4] + ".png"), img)
     if gen_mask:
         try:
             os.symlink(f"{main_path}/mask.png", f"{os.path.join(*path_parts, img_name)}.png")
