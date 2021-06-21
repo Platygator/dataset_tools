@@ -18,7 +18,7 @@ import glob
 
 label_folder = "results"
 data_folder = "mmseg_results"
-run_name = "real_1"
+run_name = "r50_umarked"
 
 # all tested parameter sets
 npy_name = f"{run_name}.npy"
@@ -35,7 +35,7 @@ ax.set_ylim([0, 100])
 
 ax.grid(which='major', alpha=0.5)
 
-epochs = np.arange(10, 610, 10)
+epochs = np.arange(100, 451, 50)
 
 # plot IoU development
 set_data = np.load(f"{data_folder}/{npy_name}", allow_pickle=True).item()
@@ -47,10 +47,11 @@ ax.plot(epochs, np.array(set_data['Mean']) * 100, label='Mean', color='red')
 # plot IoU of label
 try:
     label_data = np.load(f"{label_folder}/{npy_name[:-4]}/result.npy", allow_pickle=True).item()
-    ax.hlines(label_data['Background'] * 100, linestyles='dashed', xmin=10, xmax=280, color='blue')
-    ax.hlines(label_data['Stone'] * 100, linestyles='dashed', xmin=10, xmax=280, color='orange')
-    ax.hlines(label_data['Border'] * 100, linestyles='dashed', xmin=10, xmax=280, color='green')
-    ax.hlines(label_data['Mean'] * 100, linestyles='dashed', xmin=10, xmax=280, color='red')
+    # label_data = np.load("mmseg_results/real_2_sim_base.npy", allow_pickle=True).item()
+    ax.hlines(np.array(label_data['Background']) * 100, linestyles='dashed', xmin=epochs[0], xmax=epochs[-1], color='blue')
+    ax.hlines(np.array(label_data['Stone']) * 100, linestyles='dashed', xmin=epochs[0], xmax=epochs[-1], color='orange')
+    ax.hlines(np.array(label_data['Border']) * 100, linestyles='dashed', xmin=epochs[0], xmax=epochs[-1], color='green')
+    ax.hlines(np.array(label_data['Mean']) * 100, linestyles='dashed', xmin=epochs[0], xmax=epochs[-1], color='red')
 except FileNotFoundError:
     pass
 
