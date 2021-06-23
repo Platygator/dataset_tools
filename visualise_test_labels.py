@@ -26,7 +26,7 @@ def create_argparser():
 
 arg = create_argparser()
 base_dir = "mmseg_results/"
-ann_dir = 'boulder_photos'
+ann_dir = 'r50_r139'
 full_dir = arg['test_set']
 # base_dir = "boulderSet/test_set"
 # ann_dir = 'labels'
@@ -43,8 +43,8 @@ for i, img_name in enumerate(photo_images):
     if os.path.basename(img_name).startswith("v_"):
         continue
     print(f"Transforming image {i+1} / {len_img} -> {img_name}")
-    img = cv2.imread(f"boulderSet/test_set/images/{os.path.basename(img_name)}")
-    # img = cv2.imread(f"real_2/images/{os.path.basename(img_name)}")
+    # img = cv2.imread(f"boulderSet/test_set/images/{os.path.basename(img_name)}")
+    img = cv2.imread(f"real_2/images/{os.path.basename(img_name)}")
     # img = cv2.imread(f"boulderSet/images/{os.path.basename(img_name)}")
     label = cv2.imread(img_name, 0)
     label[label == 1] = 128
