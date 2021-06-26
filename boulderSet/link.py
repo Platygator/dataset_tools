@@ -21,6 +21,7 @@ def create_argparser():
     parser.add_argument('-l', '--labels', required=False, help='label set name')
     parser.add_argument('-i', '--images', required=False, help='image set name')
     parser.add_argument('-t', '--test', required=False, help='test set name')
+    parser.add_argument('-m', '--masks', required=False, help='mask set name')
     args = vars(parser.parse_args())
     return args
 
@@ -51,7 +52,15 @@ if args["test"]:
 
     os.symlink(f"{args['test']}", "test_set")
 
+if args["masks"]:
+    try:
+        os.unlink("masks")
+    except FileNotFoundError:
+        pass
+
+    os.symlink(f"{args['masks']}", "masks")
 
 print("labels: ", os.readlink("labels"))
 print("images: ", os.readlink("images"))
 print("test_set: ", os.readlink("test_set"))
+print("masks: ", os.readlink("masks"))
