@@ -18,7 +18,7 @@ import glob
 
 label_folder = "results"
 data_folder = "mmseg_results"
-run_name = "r50_r139"
+run_name = "r50_umarked"
 
 # all tested parameter sets
 npy_name = f"{run_name}.npy"
@@ -35,7 +35,7 @@ ax.set_ylim([0, 100])
 
 ax.grid(which='major', alpha=0.5)
 
-epochs = np.arange(100, 401, 100)
+epochs = np.arange(100, 601, 100)
 
 # plot IoU development
 set_data = np.load(f"{data_folder}/{npy_name}", allow_pickle=True).item()
