@@ -25,11 +25,11 @@ def create_argparser():
     return args
 
 arg = create_argparser()
-base_dir = "mmseg_results/"
-ann_dir = 'r50_r139'
+# base_dir = "mmseg_results/"
+# ann_dir = 'snake_r50'
 full_dir = arg['test_set']
-# base_dir = "boulderSet/test_set"
-# ann_dir = 'labels'
+base_dir = "boulderSet/test_set_save/"
+ann_dir = 'real_2_gt/labels'
 
 if not full_dir:
     full_dir = os.path.join(base_dir, ann_dir)
@@ -43,16 +43,22 @@ for i, img_name in enumerate(photo_images):
     if os.path.basename(img_name).startswith("v_"):
         continue
     print(f"Transforming image {i+1} / {len_img} -> {img_name}")
-    # img = cv2.imread(f"boulderSet/test_set/images/{os.path.basename(img_name)}")
-    img = cv2.imread(f"real_2/images/{os.path.basename(img_name)}")
+    img = cv2.imread(f"boulderSet/test_set_save/real_2_gt/images/{os.path.basename(img_name)}")
+    # img = cv2.imread(f"boulderSet/test_set_save/snake_photos/images/{os.path.basename(img_name)}")
+    # img = cv2.imread(f"boulderSet/images/{os.path.basename(img_name)}")
+    # img = cv2.imread(f"simulation_9/images/{os.path.basename(img_name)}")
     # img = cv2.imread(f"boulderSet/images/{os.path.basename(img_name)}")
     label = cv2.imread(img_name, 0)
-    label[label == 1] = 128
+    if label is None:
+        print("[ERROR] With label: ", img_name)
+        continue
+    col_label = np.zeros([label.shape[0], label.shape[1], 3], dtype='uint8')
+    col_label[label == 1] = [65, 189, 245]
     # label[label == 127] = 128
-    label[label == 2] = 255
+    col_label[label == 2] = [60, 90, 255]
     # label[label == 254] = 255
-    label[label == 3] = 50
-    visual = cv2.addWeighted(img, 0.6, label[:, :, np.newaxis].repeat(3, axis=2), 0.4, 0)
+    col_label[label == 3] = [0, 0, 0]
+    # print(np.unique(label, return_counts=True))
+    visual = cv2.addWeighted(img, 0.7, col_label, 0.4, 0)
     # print("nothing :)")
     cv2.imwrite(f'{full_dir}' + "/v_" + os.path.basename(img_name), visual)
-
